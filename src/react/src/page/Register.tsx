@@ -1,7 +1,6 @@
 import React, {SyntheticEvent, useState} from 'react';
-import { Navigate } from "react-router-dom";
 import './Register.css';
-import { Button, Checkbox, Form, Input } from 'antd';
+import { Button, Form, Input } from 'antd';
 
 const onFinish = (values: any) => {
     console.log('Success:', values);
@@ -20,24 +19,38 @@ const Register: React.FC = () => {
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
 
+    
+
     const submitbtw = async (e: SyntheticEvent) => {
         e.preventDefault();
 
-        await fetch('http://localhost:3000/api/register', {
+        const data = {
+            first_name: first_name,
+            last_name: last_name,
+            role: role,
+            email: email,
+            password: password,
+            phone: phone
+        };
+        
+        const jsonData = JSON.stringify(data)
+
+        fetch('http://localhost:3001/api/register', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                "first_name" : first_name,
-                "last_name" : last_name,
-                "role" : role,
-                "email" : email,
-                "password" : password,
-                "phone" : phone
+            body: jsonData
+        })
+            .then((response) => response.json())
+            .then((jsonData) => {
+                console.log(jsonData);
+                // Handle data
             })
-        });
+                .catch((err) => {
+                console.log(err.message);
+            });
     }
     return (
-        <form className='center1'>
+        <div className='center1'>
             <h1>REGISTER ACCOUNT</h1>
             <Form 
             name="basic"
@@ -83,7 +96,7 @@ const Register: React.FC = () => {
                 </Button>
             </Form.Item>
             </Form>
-        </form>
+        </div>
     );
 };
 
