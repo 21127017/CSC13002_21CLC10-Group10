@@ -2,8 +2,16 @@ import React, {SyntheticEvent, useState} from 'react';
 import './Register.css';
 import { Button, Form, Input } from 'antd';
 
-const onFinish = (values: any) => {
-    console.log('Success:', values);
+const onFinish = (data : any) => {
+    //console.log("truoc khi xu ly: ", data)
+    const jsonData = JSON.stringify(data)
+    //console.log("sau khi xu ly: ", jsonData)
+    fetch('http://localhost:3000/api/register', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: jsonData
+    })
+    //console.log('Success:', data);
   };
   
   const onFinishFailed = (errorInfo: any) => {
@@ -12,8 +20,8 @@ const onFinish = (values: any) => {
 
 const Register: React.FC = () => {
 
-    const [first_name, setFirst_Name] = useState('');
-    const [last_name, setLast_Name] = useState('');
+    const [firstname, setFirstName] = useState('');
+    const [lastname, setLastName] = useState('');
     const [role, setRole] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
@@ -21,34 +29,21 @@ const Register: React.FC = () => {
 
     
 
-    const submitbtw = async (e: SyntheticEvent) => {
-        e.preventDefault();
+    // const submitbtw = async (e: SyntheticEvent) => {
+    //     e.preventDefault();
 
-        const data = {
-            first_name: first_name,
-            last_name: last_name,
-            role: role,
-            email: email,
-            password: password,
-            phone: phone
-        };
+    //     const data = {
+    //         firs_tname: firstname,
+    //         last_name: lastname,
+    //         role: role,
+    //         email: email,
+    //         password: password,
+    //         phone: phone
+    //     };
         
-        const jsonData = JSON.stringify(data)
-
-        fetch('http://localhost:3001/api/register', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: jsonData
-        })
-            .then((response) => response.json())
-            .then((jsonData) => {
-                console.log(jsonData);
-                // Handle data
-            })
-                .catch((err) => {
-                console.log(err.message);
-            });
-    }
+    //     //const jsonData = JSON.stringify(data)
+    //     onFinish(data)
+    // }
     return (
         <div className='center1'>
             <h1>REGISTER ACCOUNT</h1>
@@ -63,27 +58,27 @@ const Register: React.FC = () => {
             autoComplete="off"
             >
 
-            <Form.Item label="First name" name="first name" rules={[{ required: true, message: 'Please input your first name!' }]}>
-                <Input onChange={e => setFirst_Name(e.target.value)} />
+            <Form.Item label="First name" name="FirstName" rules={[{ required: true, message: 'Please input your first name!' }]}>
+                <Input onChange={e => setFirstName(e.target.value)} />
             </Form.Item>
 
-            <Form.Item label="Last name" name="last name" rules={[{ required: true, message: 'Please input your last name!' }]}>
-                <Input onChange={e => setLast_Name(e.target.value)} />
+            <Form.Item label="Last name" name="LastName" rules={[{ required: true, message: 'Please input your last name!' }]}>
+                <Input onChange={e => setLastName(e.target.value)} />
             </Form.Item>
 
-            <Form.Item label="Role" name="role" rules={[{ required: true, message: 'Please input your role!' }]}>
+            <Form.Item label="Role" name="Role" rules={[{ required: true, message: 'Please input your role!' }]}>
                 <Input onChange={e => setRole(e.target.value)} />
             </Form.Item>
 
-            <Form.Item label="Email" name="email" rules={[{ required: true, message: 'Please input your email!' }]}>
+            <Form.Item label="Email" name="Email" rules={[{ required: true, message: 'Please input your email!' }]}>
                 <Input onChange={e => setEmail(e.target.value)} />
             </Form.Item>
 
-            <Form.Item label="Phone" name="phone" rules={[{ required: true, message: 'Please input your phone!' }]}>
+            <Form.Item label="Phone" name="Phone" rules={[{ required: true, message: 'Please input your phone!' }]}>
                 <Input onChange={e => setPhone(e.target.value)} />
             </Form.Item>
 
-            <Form.Item label="Password" name="password" rules={[{ required: true, message: 'Please input your password!' }]}>
+            <Form.Item label="Password" name="Password" rules={[{ required: true, message: 'Please input your password!' }]}>
                 <Input onChange={e => setPassword(e.target.value)} />
             </Form.Item>
         
@@ -91,7 +86,7 @@ const Register: React.FC = () => {
                 <Input.Password />
             </Form.Item>
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                <Button type="primary" htmlType="submit" onClick={() => submitbtw}>
+                <Button type="primary" htmlType="submit">
                     Submit
                 </Button>
             </Form.Item>
