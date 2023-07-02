@@ -6,7 +6,7 @@ import Register from './page/Register';
 
 const { Header, Content, Footer, Sider } = Layout;
 
-const items1: MenuProps['items'] = ['Home', 'Login', 'Logout'].map((key) => ({
+const items1: MenuProps['items'] = ['Home', 'Log In', 'Log Up'].map((key) => ({
   key,
   label: `${key}`,
 }));
