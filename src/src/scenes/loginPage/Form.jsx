@@ -13,6 +13,7 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { setLogin } from "state";
 import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
 
@@ -26,6 +27,11 @@ const registerSchema = yup.object().shape({
   picture: yup.string().required("required"),
 });
 
+const loginSchema = yup.object().shape({
+  email: yup.string().email("invalid email").required("required"),
+  password: yup.string().required("required"),
+});
+
 const initialValuesRegister = {
   firstName: "",
   lastName: "",
@@ -34,6 +40,11 @@ const initialValuesRegister = {
   location: "",
   occupation: "",
   picture: "",
+};
+
+const initialValuesLogin = {
+  email: "",
+  password: "",
 };
 
 const Form = () => {
@@ -68,7 +79,27 @@ const Form = () => {
     }
   };
 
+  const login = async (values, onSubmitProps) => {
+    const loggedInResponse = await fetch("http://localhost:3001/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(values),
+    });
+    const loggedIn = await loggedInResponse.json();
+    onSubmitProps.resetForm();
+    if (loggedIn) {
+      dispatch(
+        setLogin({
+          user: loggedIn.user,
+          token: loggedIn.token,
+        })
+      );
+      navigate("/home");
+    }
+  };
+
   const handleFormSubmit = async (values, onSubmitProps) => {
+    if (isLogin) await login(values, onSubmitProps);
     if (isRegister) await register(values, onSubmitProps);
   };
 
@@ -178,6 +209,29 @@ const Form = () => {
                 </Box>
               </>
             )}
+
+            <TextField
+              label="Email"
+              onBlur={handleBlur}
+              onChange={handleChange}
+              value={values.email}
+              name="email"
+              error={Boolean(touched.email) && Boolean(errors.email)}
+              helperText={touched.email && errors.email}
+              sx={{ gridColumn: "span 4" }}
+            />
+            <TextField
+              label="Password"
+              type="password"
+              onBlur={handleBlur}
+              onChange={handleChange}
+              value={values.password}
+              name="password"
+              error={Boolean(touched.password) && Boolean(errors.password)}
+              helperText={touched.password && errors.password}
+              sx={{ gridColumn: "span 4" }}
+            />
+          </Box>
 
           {/* BUTTONS */}
           <Box>
