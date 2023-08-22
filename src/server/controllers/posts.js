@@ -150,3 +150,74 @@ export const donateUserPosts = async (req, res) => {
   }
 };
 
+/* Delete post */
+export const deletePost = async (req, res) => {
+  try {
+    const { id, user } = req.params;
+    
+    // Kiểm tra quyền admin dựa trên location của user
+    const admin = await User.findById(user);
+    if (admin.location !== "admin") {
+      return res.status(403).json({ message: "Permission denied." });
+    }
+
+    const deletedPost = await Post.findByIdAndDelete(id);
+
+    if (!deletedPost) {
+      return res.status(404).json({ message: "Post not found." });
+    }
+
+    return res.status(200).json({ message: "Post deleted successfully." });
+  } catch (err) {
+    console.error("Error deleting post:", err);
+    return res.status(500).json({ message: "Error deleting post." });
+  }
+};
+
+/* Create comment */
+export const createComment = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { userId, comment } = req.body;
+    
+    const post = await Post.findById(id);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found." });
+    }
+
+    if (!comment){
+      return res.status(400).json({ message: "Empty comment." });
+    }
+    post.comments.push({ userId, comment });
+    const updatedPost = await post.save();
+
+    res.status(200).json(updatedPost);
+  } catch (err) {
+    console.error("Error creating comment:", err);
+    res.status(500).json({ message: "Error creating comment." });
+  }
+};
+
+/* delete comment */
+export const deleteComment = async (req, res) => {
+  try {
+    const { id, commentIndex } = req.params;
+    const post = await Post.findById(id);
+
+    if (!post) {
+      return res.status(404).json({ message: "Post not found." });
+    }
+
+    if (commentIndex < 0 || commentIndex >= post.comments.length) {
+      return res.status(400).json({ message: "Invalid comment index." });
+    }
+
+    post.comments.splice(commentIndex, 1);
+    await post.save();
+
+    res.status(200).json({ message: "Comment deleted successfully." });
+  } catch (err) {
+    console.error("Error deleting comment:", err);
+    return res.status(500).json({ message: "Error deleting comment." });
+  }
+};
