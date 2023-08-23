@@ -24,6 +24,7 @@ import { setMode, setLogout } from "state";
 import { useNavigate } from "react-router-dom";
 import FlexBetween from "components/FlexBetween";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
@@ -76,6 +77,21 @@ const Navbar = () => {
       {/* DESKTOP NAV */}
       {isNonMobileScreens ? (
         <FlexBetween gap="2rem">
+          <FlexBetween backgroundColor={alt}>
+            {/* ... your existing code ... */}
+
+            {/* Add the Wallet Icon and Link */}
+            {user && user.location === "admin" && (
+            <Tooltip title="admin">
+              <AdminPanelSettingsIcon sx={{
+                "&:hover": {
+                  color: 'lightgrey',
+                  cursor: "pointer",
+                },
+              }} onClick={() => navigate("/admin")}/> 
+            </Tooltip>
+            )}
+          </FlexBetween>
           <FlexBetween backgroundColor={alt}>
             {/* ... your existing code ... */}
 

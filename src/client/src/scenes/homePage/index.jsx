@@ -30,6 +30,23 @@ const HomePage = () => {
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
   const { _id, picturePath } = useSelector((state) => state.user);
 
+   // Sử dụng useState để theo dõi chiều cao màn hình
+  const [windowHeight, setWindowHeight] = React.useState(window.innerHeight);
+
+  // Cập nhật chiều cao màn hình khi cửa sổ được thay đổi
+  const handleResize = () => {
+    setWindowHeight(window.innerHeight);
+  };
+
+  React.useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  const maxHeight = `${(windowHeight * 0.8)}px`;
+
   return (
     <Box >
       <Navbar />
@@ -46,24 +63,28 @@ const HomePage = () => {
         <Box
           flexBasis={isNonMobileScreens ? "42%" : undefined}
           mt={isNonMobileScreens ? undefined : "2rem"}
+          sx={{ maxHeight, overflowY: "auto" }}
         >
+          <MyPostWidget picturePath={picturePath} />
           <Typography
             //fontWeight="bold"
             fontWeight="bold"
             fontStyle="italic"
-            sx={{ fontSize: 25, m: 1 }}
+            sx={{ fontSize: 25, m: 2 }}
             color="primary"
+            paddingTop={2}
           >
             Welcome to NewsFeed🎉🎉
           </Typography>
-          <MyPostWidget picturePath={picturePath} />
           <PostsWidget userId={_id} />
         </Box>
         {isNonMobileScreens && (
-          <Box flexBasis="26%">
+          <Box flexBasis="26%" sx={{ maxHeight, overflowY: "auto" }}>
             <AdvertWidget />
             <Box m="2rem 0" />
+            <Box >
             <FriendListWidget userId={_id} />
+            </Box>
           </Box>
         )}
       </Box>

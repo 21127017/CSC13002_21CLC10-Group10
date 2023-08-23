@@ -130,9 +130,9 @@ const Form = () => {
               "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
             }}
           >
-            {isRegister && (
-              <>
-                <TextField
+              {isRegister && (
+                <>
+                  <TextField
                   label="First Name"
                   onBlur={handleBlur}
                   onChange={handleChange}

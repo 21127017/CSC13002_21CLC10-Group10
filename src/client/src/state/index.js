@@ -5,6 +5,7 @@ const initialState = {
   user: null,
   token: null,
   posts: [],
+  pendingRequests: [],
 };
 
 export const authSlice = createSlice({
@@ -38,6 +39,9 @@ export const authSlice = createSlice({
         return post;
       });
       state.posts = updatedPosts;
+    },
+    setPendingRequests: (state, action) => {
+      state.pendingRequests = action.payload.pendingRequests;
     },
   },
 });

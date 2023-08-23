@@ -5,6 +5,7 @@ import ProfilePage from "scenes/profilePage";
 import WalletPage from "scenes/wallet";
 import DepositPage from "scenes/deposit";
 import WithdrawPage from "scenes/withdraw";
+import AdminDepositRequestsPage from "scenes/admin";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { CssBaseline, ThemeProvider } from "@mui/material";
@@ -42,6 +43,10 @@ function App() {
             <Route
               path="/withdraw"
               element={isAuth ? <WithdrawPage /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/admin"
+              element={isAuth ? <AdminDepositRequestsPage /> : <Navigate to="/" />}
             />
           </Routes>
         </ThemeProvider>
