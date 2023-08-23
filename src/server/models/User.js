@@ -1,5 +1,12 @@
 import mongoose from "mongoose";
 
+const DepositRequestSchema = new mongoose.Schema({
+  type_: String, // Loại giao dịch: deposit
+  date_: Date, // Ngày giao dịch
+  amount: Number, // Số tiền
+  status: String, // Trạng thái: pending, accepted, denied
+});
+
 const UserSchema = new mongoose.Schema(
   {
     firstName: {
@@ -38,6 +45,7 @@ const UserSchema = new mongoose.Schema(
     viewedProfile: Number,
     impressions: Number,
     money: Number,
+    depositRequests: [DepositRequestSchema],
   },
   { timestamps: true }
 );
