@@ -5,6 +5,7 @@ import {
   DeleteOutlineOutlined,
 } from "@mui/icons-material";
 import MonetizationOnOutlinedIcon from '@mui/icons-material/MonetizationOnOutlined';
+import SendIcon from '@mui/icons-material/Send';
 import { Box, Divider, IconButton, Typography, useTheme, Snackbar, styled } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
 import Friend from "components/Friend";
@@ -81,10 +82,13 @@ const PostWidget = ({
   money,
 }) => {
   const [isCommentPopupOpen, setIsCommentPopupOpen] = useState(false);
-  const [commentValue, setCommentValue] = useState("");
+  const [showComments, setShowComments] = useState(false);
+  const [commentInputValue, setCommentInputValue] = useState("");
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const loggedInUserId = useSelector((state) => state.user._id);
+  const firstname = useSelector((state) => state.user.firstName);
+  const lastname = useSelector((state) => state.user.lastName);
   const isLiked = Boolean(likes[loggedInUserId]);
   const likeCount = Object.keys(likes).length;
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -98,6 +102,10 @@ const PostWidget = ({
   const [isReloading, setIsReloading] = useState(false);
   const [showSubmitPopup, setShowSubmitPopup] = useState(false);
   const [showErrorPopup, setShowErrorPopup] = useState(false);
+  const [showDeleteCommentPopup, setShowDeleteCommentPopup] = useState(false);
+  const [showErrorCommentPopup, setShowErrorCommentPopup] = useState(false);
+
+
 
   const { palette } = useTheme();
   const main = palette.neutral.main;
@@ -174,27 +182,84 @@ const PostWidget = ({
   };
 
   const handleCommentSubmit = async () => {
-    // Thực hiện các hành động cần thiết khi nhấn Submit trong popup
-     // Đóng popup sau khi hoàn thành hành động
     try {
-      const response = await fetch("http://localhost:3001/your/endpoint", {
+      const response = await fetch(`http://localhost:3001/posts/${postId}/comments`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ amount: inputValue }),
+        body: JSON.stringify({ userId: loggedInUserId, comment: commentInputValue }),
       });
   
       if (response.ok) {
-        setIsCommentPopupOpen(false); // Đóng popup sau khi gửi thông báo thành công
+        // Thực hiện cập nhật bài post sau khi comment được gửi thành công
+        const updatedPost = await response.json();
+        dispatch(setPost({ post: updatedPost }));
+        setCommentInputValue(""); // Đặt lại giá trị của commentInputValue
+      } else {
+        // Xử lý khi có lỗi
+        setShowErrorCommentPopup(true);
+        setTimeout(() => {
+          setShowErrorCommentPopup(false);
+        }, 3000);
+        console.error("Error sending comment:", response.status, response.statusText);
+      }
+    } catch (error) {
+      console.error("Error sending comment:", error);
+    }
+  };
+  
+  const handleDeleteComment = async (commentIndex) => {
+    try {
+      const response = await fetch(`http://localhost:3001/posts/${postId}/comments/${commentIndex}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      if (response.ok) {
+        // Xoá comment khỏi state
+        const updatedComments = [...comments];
+        updatedComments.splice(commentIndex, 1);
+        setShowComments(updatedComments);
+        setShowDeleteCommentPopup(true);
+        setTimeout(() => {
+          window.location.reload();
+
+        }, 3000);
       } else {
         // Xử lý khi có lỗi
       }
     } catch (error) {
-      console.error("Error sending notification:", error);
+      console.error("Error deleting comment:", error);
     }
   };
+  
+  const [userNames, setUserNames] = useState({});
+
+  useEffect(() => {
+    const fetchUserNames = async () => {
+      const userNamesData = {};
+      for (const comment of comments) {
+        if (!userNamesData[comment.userId]) {
+          const response = await fetch(`http://localhost:3001/users/${comment.userId}`, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const userData = await response.json();
+          console.log(userData)
+          userNamesData[comment.userId] = `${userData.firstName} ${userData.lastName}`;
+        }
+      }
+      setUserNames(userNamesData);
+    };
+
+    fetchUserNames();
+  }, [comments]);
 
   return (
     <Box>
@@ -231,9 +296,9 @@ const PostWidget = ({
             </FlexBetween>
 
             <FlexBetween gap="0.3rem">
-              <IconButton onClick={() => setIsCommentPopupOpen(!isCommentPopupOpen)}>
-                <ChatBubbleOutlineOutlined />
-              </IconButton>
+            <IconButton onClick={() => setShowComments(!showComments)}>
+              <ChatBubbleOutlineOutlined />
+            </IconButton>
               <Typography>{comments.length}</Typography>
             </FlexBetween>
           </FlexBetween>
@@ -248,15 +313,15 @@ const PostWidget = ({
         </FlexBetween>
         {isCommentPopupOpen && (
           <div className="popup">
-            <input
-              type="text"
-              value={commentValue}
-              onChange={(e) => setCommentValue(e.target.value)}
-              placeholder="Enter your comment"
-            />
-            <button onClick={handleCommentSubmit}>Submit</button>
-            <button onClick={() => setIsCommentPopupOpen(false)}>Cancel</button>
-          </div>
+          <input
+            type="text"
+            value={commentInputValue}
+            onChange={(e) => setCommentInputValue(e.target.value)}
+            placeholder="Enter your comment"
+          />
+          <button onClick={handleCommentSubmit}>Submit</button>
+          <button onClick={() => setIsCommentPopupOpen(false)}>Cancel</button>
+        </div>
         )}
         {isPopupOpen && (
         <div
@@ -328,6 +393,61 @@ const PostWidget = ({
           </div>
         </div>
       )}
+      {showComments && (
+        <div>
+          {comments.map(({ _id, userId, comment }, index) => (
+        <div key={_id} style={{ marginBottom: "1rem", display: "flex", alignItems: "center" }}>
+          <div style={{ flex: 1 }}>
+            <strong>
+              {userNames[userId]}
+            </strong>: {comment}
+          </div>
+              {(userRole === "admin" || userId === loggedInUserId) && (
+                <button
+                  onClick={() => handleDeleteComment(index)}
+                  style={{
+                    marginLeft: "1rem",
+                    backgroundColor: "red",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    padding: "4px 8px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Delete
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+      <textarea
+        value={commentInputValue}
+        onChange={(e) => setCommentInputValue(e.target.value)}
+        placeholder="Enter your comment"
+        style={{
+          width: "100%",
+          padding: "0.5rem",
+          borderRadius: "5px",
+          border: "1px solid #ccc",
+          resize: "vertical",
+          marginBottom: "0.5rem",
+        }}
+      />
+      <button
+        onClick={handleCommentSubmit}
+        style={{
+          backgroundColor: "#007bff",
+          color: "white",
+          border: "none",
+          borderRadius: "5px",
+          padding: "0.5rem 1rem",
+          cursor: "pointer",
+        }}
+      >
+        Submit Comment
+      </button>
       </WidgetWrapper>
       <FlexBetween >
           {userRole === "admin" ? (
@@ -371,6 +491,25 @@ const PostWidget = ({
         </IconButton>
       </ErrorPopup>
     </Snackbar>
+
+    <Snackbar open={showDeleteCommentPopup} autoHideDuration={3000} onClose={() => setShowDeleteCommentPopup(false)}>
+      <SuccessPopup>
+        <div>Comment đã được xoá thành công.</div>
+        <IconButton onClick={() => setShowDeleteCommentPopup(false)} size="small" sx={{ color: 'white' }}>
+          <CloseIcon />
+        </IconButton>
+      </SuccessPopup>
+    </Snackbar>
+
+    <Snackbar open={showErrorCommentPopup} autoHideDuration={3000} onClose={() => setShowErrorCommentPopup(false)}>
+      <ErrorPopup>
+        <div>Không thể gửi comment không có nội dung.</div>
+        <IconButton onClick={() => setShowErrorCommentPopup(false)} size="small" sx={{ color: 'white' }}>
+          <CloseIcon />
+        </IconButton>
+      </ErrorPopup>
+    </Snackbar>
+    
     </Box>
   );
 };

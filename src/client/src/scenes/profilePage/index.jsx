@@ -32,6 +32,7 @@ const ProfilePage = () => {
   const { userId } = useParams();
   const token = useSelector((state) => state.token);
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
+  const loggedInUser = useSelector((state) => state.user); // Lấy thông tin user đang đăng nhập
 
   const getUser = async () => {
     const response = await fetch(`http://localhost:3001/users/${userId}`, {
@@ -47,6 +48,8 @@ const ProfilePage = () => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!user) return null;
+
+  const isAdminViewing = loggedInUser.location === "admin"; // Kiểm tra nếu user đang xem là admin
 
   return (
     <Box>
@@ -76,18 +79,35 @@ const ProfilePage = () => {
           flexBasis={isNonMobileScreens ? "42%" : undefined}
           mt={isNonMobileScreens ? undefined : "2rem"}
         >
-          <Typography
-            //fontWeight="bold"
-            fontWeight="bold"
-            fontStyle="italic"
-            sx={{ fontSize: 25, m: 1 }}
-            color="primary"
-            textAlign={"right"}
-          >
-            Post
-          </Typography>
-          <MyPostWidget picturePath={user.picturePath} />
+          <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+            >
+              {/* Các phần tử khác trong bố cục */}
+              {isAdminViewing && (
+                <Box
+                  textAlign="center"  // Căn giữa theo chiều ngang
+                  mb={2}
+                  fontWeight="bold"
+                  sx={{
+                    fontSize: 25,
+                    border: "2px solid #ccc",
+                    borderRadius: "4px",
+                    padding: "10px",
+                    display: "inline-block",
+                  }}
+                  color="purple"
+                >
+                  <Typography fontWeight="bold" sx={{ fontSize: 25, m: 1 }} color="common"> 
+                    User Wallet Amount: ${user.money || 0}
+                  </Typography>
+                </Box>
+              )}
+            </Box>
+
           <Box m="2rem 0" />
+          
           <PostsWidget userId={userId} isProfile />
         </Box>
       </Box>
