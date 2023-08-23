@@ -1,6 +1,6 @@
+import React from 'react';
 import { Box, Typography, useTheme, useMediaQuery } from "@mui/material";
 import Form from "./Form";
-import React from 'react';
 
 const LoginPage = () => {
   const theme = useTheme();
@@ -14,7 +14,7 @@ const LoginPage = () => {
         textAlign="center"
       >
         <Typography fontWeight="bold" fontSize="32px" color="primary">
-          FriendSphere
+          InvestingHub
         </Typography>
       </Box>
 

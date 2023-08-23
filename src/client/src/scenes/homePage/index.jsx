@@ -1,4 +1,3 @@
-import { Box, useMediaQuery } from "@mui/material";
 import React from 'react';
 import { useSelector } from "react-redux";
 import Navbar from "scenes/navbar";
@@ -7,13 +6,32 @@ import MyPostWidget from "scenes/widgets/MyPostWidget";
 import PostsWidget from "scenes/widgets/PostsWidget";
 import AdvertWidget from "scenes/widgets/AdvertWidget";
 import FriendListWidget from "scenes/widgets/FriendListWidget";
+import {
+  Box,
+  IconButton,
+  InputBase,
+  Typography,
+  Select,
+  MenuItem,
+  FormControl,
+  useTheme,
+  useMediaQuery,
+  Tooltip,
+} from "@mui/material";
+import {
+  Search,
+  DarkMode,
+  LightMode,
+  Menu,
+  Close,
+} from "@mui/icons-material";
 
 const HomePage = () => {
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
   const { _id, picturePath } = useSelector((state) => state.user);
 
   return (
-    <Box>
+    <Box >
       <Navbar />
       <Box
         width="100%"
@@ -29,6 +47,15 @@ const HomePage = () => {
           flexBasis={isNonMobileScreens ? "42%" : undefined}
           mt={isNonMobileScreens ? undefined : "2rem"}
         >
+          <Typography
+            //fontWeight="bold"
+            fontWeight="bold"
+            fontStyle="italic"
+            sx={{ fontSize: 25, m: 1 }}
+            color="primary"
+          >
+            Welcome to NewsFeed🎉🎉
+          </Typography>
           <MyPostWidget picturePath={picturePath} />
           <PostsWidget userId={_id} />
         </Box>

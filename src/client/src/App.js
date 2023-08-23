@@ -1,8 +1,10 @@
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
-import LoginPage from "scenes/loginPage";
 import HomePage from "scenes/homePage";
-import React from 'react';
+import LoginPage from "scenes/loginPage";
 import ProfilePage from "scenes/profilePage";
+import WalletPage from "scenes/wallet";
+import DepositPage from "scenes/deposit";
+import WithdrawPage from "scenes/withdraw";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { CssBaseline, ThemeProvider } from "@mui/material";
@@ -28,6 +30,18 @@ function App() {
             <Route
               path="/profile/:userId"
               element={isAuth ? <ProfilePage /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/wallet/:userId"
+              element={isAuth ? <WalletPage /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/deposit"
+              element={isAuth ? <DepositPage /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/withdraw"
+              element={isAuth ? <WithdrawPage /> : <Navigate to="/" />}
             />
           </Routes>
         </ThemeProvider>

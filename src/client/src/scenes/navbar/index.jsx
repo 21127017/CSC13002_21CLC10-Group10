@@ -1,5 +1,5 @@
-import { useState } from "react";
 import React from 'react';
+import { useState } from "react";
 import {
   Box,
   IconButton,
@@ -10,6 +10,7 @@ import {
   FormControl,
   useTheme,
   useMediaQuery,
+  Tooltip,
 } from "@mui/material";
 import {
   Search,
@@ -22,6 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setMode, setLogout } from "state";
 import { useNavigate } from "react-router-dom";
 import FlexBetween from "components/FlexBetween";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 
 const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
@@ -54,7 +56,7 @@ const Navbar = () => {
             },
           }}
         >
-          FriendSphere
+          InvestingHub
         </Typography>
         {isNonMobileScreens && (
           <FlexBetween
@@ -74,13 +76,28 @@ const Navbar = () => {
       {/* DESKTOP NAV */}
       {isNonMobileScreens ? (
         <FlexBetween gap="2rem">
-          <IconButton onClick={() => dispatch(setMode())}>
-            {theme.palette.mode === "dark" ? (
-              <DarkMode sx={{ fontSize: "25px" }} />
-            ) : (
-              <LightMode sx={{ color: dark, fontSize: "25px" }} />
-            )}
-          </IconButton>
+          <FlexBetween backgroundColor={alt}>
+            {/* ... your existing code ... */}
+
+            {/* Add the Wallet Icon and Link */}
+            <Tooltip title="Wallet Amount">
+              <AccountBalanceWalletIcon sx={{
+                "&:hover": {
+                  color: 'lightgrey',
+                  cursor: "pointer",
+                },
+              }} onClick={() => navigate("/wallet/:userId")}/> {/* Display the wallet icon */}
+            </Tooltip>
+          </FlexBetween>
+          <Tooltip title="Dark/Light">
+            <IconButton onClick={() => dispatch(setMode())}>
+              {theme.palette.mode === "dark" ? (
+                <DarkMode sx={{ fontSize: "25px" }} />
+              ) : (
+                <LightMode sx={{ color: dark, fontSize: "25px" }} />
+              )}
+            </IconButton>
+          </Tooltip>
           <FormControl variant="standard" value={fullName}>
             <Select
               value={fullName}

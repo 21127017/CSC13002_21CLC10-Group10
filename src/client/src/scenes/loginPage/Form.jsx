@@ -6,9 +6,11 @@ import {
   useMediaQuery,
   Typography,
   useTheme,
+  InputLabel,
+  MenuItem,
+  Select,
 } from "@mui/material";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import React from 'react';
 import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
@@ -152,16 +154,27 @@ const Form = () => {
                   helperText={touched.lastName && errors.lastName}
                   sx={{ gridColumn: "span 2" }}
                 />
-                <TextField
-                  label="Location"
+                <Select
+                  label="Role"
                   onBlur={handleBlur}
                   onChange={handleChange}
                   value={values.location}
                   name="location"
                   error={Boolean(touched.location) && Boolean(errors.location)}
                   helperText={touched.location && errors.location}
-                  sx={{ gridColumn: "span 4" }}
-                />
+                  sx={{ gridColumn: "span 2" }}
+                >
+                  <MenuItem value="">
+                    <em>Choose a role</em>
+                  </MenuItem>
+                  <MenuItem value="investor">Investor</MenuItem>
+                  <MenuItem value="investmentCaller">Investment Caller</MenuItem>
+                  <MenuItem value="admin">Admin</MenuItem>
+                </Select>
+                <Typography variant="body2" sx={{ gridColumn: "span 2" ,fontStyle: 'italic'}}>
+                  1. As an investor, you can donate to posts, but you have no responsibilities to call for investments.<br />
+                  2. With the investment caller location, you can create posts to call for donations.
+                </Typography>
                 <TextField
                   label="Occupation"
                   onBlur={handleBlur}

@@ -1,5 +1,23 @@
-import { Box, useMediaQuery } from "@mui/material";
 import React from 'react';
+import {
+  Box,
+  IconButton,
+  InputBase,
+  Typography,
+  Select,
+  MenuItem,
+  FormControl,
+  useTheme,
+  useMediaQuery,
+  Tooltip,
+} from "@mui/material";
+import {
+  Search,
+  DarkMode,
+  LightMode,
+  Menu,
+  Close,
+} from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -41,6 +59,15 @@ const ProfilePage = () => {
         justifyContent="center"
       >
         <Box flexBasis={isNonMobileScreens ? "26%" : undefined}>
+        <Typography
+            //fontWeight="bold"
+            fontWeight="bold"
+            fontStyle="italic"
+            sx={{ fontSize: 25, m: 1 }}
+            color="primary"
+          >
+            Profile
+          </Typography>
           <UserWidget userId={userId} picturePath={user.picturePath} />
           <Box m="2rem 0" />
           <FriendListWidget userId={userId} />
@@ -49,6 +76,16 @@ const ProfilePage = () => {
           flexBasis={isNonMobileScreens ? "42%" : undefined}
           mt={isNonMobileScreens ? undefined : "2rem"}
         >
+          <Typography
+            //fontWeight="bold"
+            fontWeight="bold"
+            fontStyle="italic"
+            sx={{ fontSize: 25, m: 1 }}
+            color="primary"
+            textAlign={"right"}
+          >
+            Post
+          </Typography>
           <MyPostWidget picturePath={user.picturePath} />
           <Box m="2rem 0" />
           <PostsWidget userId={userId} isProfile />

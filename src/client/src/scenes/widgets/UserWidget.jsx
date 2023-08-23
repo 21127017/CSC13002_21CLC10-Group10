@@ -1,12 +1,11 @@
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import {
   ManageAccountsOutlined,
   EditOutlined,
-  LocationOnOutlined,
   WorkOutlineOutlined,
 } from "@mui/icons-material";
 import { Box, Typography, Divider, useTheme } from "@mui/material";
 import UserImage from "components/UserImage";
-import React from 'react';
 import FlexBetween from "components/FlexBetween";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useSelector } from "react-redux";
@@ -47,6 +46,7 @@ const UserWidget = ({ userId, picturePath }) => {
     viewedProfile,
     impressions,
     friends,
+    money,
   } = user;
 
   return (
@@ -74,6 +74,7 @@ const UserWidget = ({ userId, picturePath }) => {
               {firstName} {lastName}
             </Typography>
             <Typography color={medium}>{friends.length} friends</Typography>
+            {/* <Typography color={medium}>Wallet Amount: ${money}</Typography> Display wallet amount */}
           </Box>
         </FlexBetween>
         <ManageAccountsOutlined />
@@ -84,7 +85,7 @@ const UserWidget = ({ userId, picturePath }) => {
       {/* SECOND ROW */}
       <Box p="1rem 0">
         <Box display="flex" alignItems="center" gap="1rem" mb="0.5rem">
-          <LocationOnOutlined fontSize="large" sx={{ color: main }} />
+          <AccountCircleIcon fontSize="large" sx={{ color: main }} />
           <Typography color={medium}>{location}</Typography>
         </Box>
         <Box display="flex" alignItems="center" gap="1rem">
