@@ -450,7 +450,7 @@ const PostWidget = ({
       </button>
       </WidgetWrapper>
       <FlexBetween >
-          {userRole === "admin" ? (
+          {userRole === "admin" || postUserId == loggedInUserId ? (
                 <>
                   <IconButton sx={{
                       marginLeft: "auto", // Đẩy nút về phía bên phải

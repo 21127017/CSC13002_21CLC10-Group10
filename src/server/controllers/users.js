@@ -65,8 +65,7 @@ export const addRemoveFriend = async (req, res) => {
     res.status(404).json({ message: err.message });
   }
 };
-
-/* send deposit request */
+/////////////////////
 export const addDepositRequest = async (req, res) => {
   try {
     const { id } = req.params; 

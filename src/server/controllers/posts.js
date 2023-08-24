@@ -73,7 +73,6 @@ export const likePost = async (req, res) => {
   }
 };
 
-/* Donate */
 export const donateUserPosts = async (req, res) => {
   try {
     const { userDonate, userId } = req.params; // Lấy userDonate và userId từ URL params
@@ -150,7 +149,6 @@ export const donateUserPosts = async (req, res) => {
   }
 };
 
-/* Delete post */
 export const deletePost = async (req, res) => {
   try {
     const { id, user } = req.params;
@@ -174,7 +172,6 @@ export const deletePost = async (req, res) => {
   }
 };
 
-/* Create comment */
 export const createComment = async (req, res) => {
   try {
     const { id } = req.params;
@@ -198,7 +195,6 @@ export const createComment = async (req, res) => {
   }
 };
 
-/* delete comment */
 export const deleteComment = async (req, res) => {
   try {
     const { id, commentIndex } = req.params;

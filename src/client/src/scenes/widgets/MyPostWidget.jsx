@@ -32,6 +32,7 @@ const MyPostWidget = ({ picturePath }) => {
   const [post, setPost] = useState("");
   const { palette } = useTheme();
   const { _id } = useSelector((state) => state.user);
+  const role = useSelector((state) => state.user.location);
   const token = useSelector((state) => state.token);
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
   const mediumMain = palette.neutral.mediumMain;
@@ -59,6 +60,8 @@ const MyPostWidget = ({ picturePath }) => {
 
   return (
     <WidgetWrapper>
+      {role == "investmentCaller" || role == "admin" ? (
+                <>
       <FlexBetween gap="1.5rem">
         <UserImage image={picturePath} />
         <InputBase
@@ -166,6 +169,8 @@ const MyPostWidget = ({ picturePath }) => {
           POST
         </Button>
       </FlexBetween>
+      </>
+              ) : null}
     </WidgetWrapper>
   );
 };
