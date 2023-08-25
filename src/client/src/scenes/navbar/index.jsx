@@ -76,44 +76,50 @@ const Navbar = () => {
 
       {/* DESKTOP NAV */}
       {isNonMobileScreens ? (
-        <FlexBetween gap="2rem">
-          <FlexBetween backgroundColor={alt}>
-            {/* ... your existing code ... */}
-
-            {/* Add the Wallet Icon and Link */}
-            {user && user.location === "admin" && (
+        <FlexBetween gap="2rem" justifyContent="center">
+        <FlexBetween backgroundColor={alt}>
+          {/* ... your existing code ... */}
+          {/* Add the Wallet Icon and Link */}
+          {user && user.location === "admin" && (
             <Tooltip title="admin">
-              <AdminPanelSettingsIcon sx={{
+              <AdminPanelSettingsIcon
+                sx={{
+                  "&:hover": {
+                    color: "lightgrey",
+                    cursor: "pointer",
+                  },
+                }}
+                onClick={() => navigate("/admin")}
+              />
+            </Tooltip>
+          )}
+        </FlexBetween>
+        <FlexBetween backgroundColor={alt}>
+          {/* ... your existing code ... */}
+          {/* Add the Wallet Icon and Link */}
+          <Tooltip title="Wallet Amount">
+            <AccountBalanceWalletIcon
+              sx={{
                 "&:hover": {
-                  color: 'lightgrey',
+                  color: "lightgrey",
                   cursor: "pointer",
                 },
-              }} onClick={() => navigate("/admin")}/> 
-            </Tooltip>
-            )}
-          </FlexBetween>
-          <FlexBetween backgroundColor={alt}>
-            {/* ... your existing code ... */}
-
-            {/* Add the Wallet Icon and Link */}
-            <Tooltip title="Wallet Amount">
-              <AccountBalanceWalletIcon sx={{
-                "&:hover": {
-                  color: 'lightgrey',
-                  cursor: "pointer",
-                },
-              }} onClick={() => navigate("/wallet/:userId")}/> {/* Display the wallet icon */}
-            </Tooltip>
-          </FlexBetween>
-          <Tooltip title="Dark/Light">
-            <IconButton onClick={() => dispatch(setMode())}>
-              {theme.palette.mode === "dark" ? (
-                <DarkMode sx={{ fontSize: "25px" }} />
-              ) : (
-                <LightMode sx={{ color: dark, fontSize: "25px" }} />
-              )}
-            </IconButton>
+              }}
+              onClick={() => navigate("/wallet/:userId")}
+            />
+            {/* Display the wallet icon */}
           </Tooltip>
+        </FlexBetween>
+        <Tooltip title="Dark/Light">
+          <IconButton onClick={() => dispatch(setMode())}>
+            {theme.palette.mode === "dark" ? (
+              <DarkMode sx={{ fontSize: "25px" }} />
+            ) : (
+              <LightMode sx={{ color: dark, fontSize: "25px" }} />
+            )}
+          </IconButton>
+        </Tooltip>
+      
           <FormControl variant="standard" value={fullName}>
             <Select
               value={fullName}

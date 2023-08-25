@@ -154,10 +154,10 @@ export const deletePost = async (req, res) => {
     const { id, user } = req.params;
     
     // Kiểm tra quyền admin dựa trên location của user
-    const admin = await User.findById(user);
-    if (admin.location !== "admin") {
-      return res.status(403).json({ message: "Permission denied." });
-    }
+    // const admin = await User.findById(user);
+    // if (admin.location !== "admin") {
+    //   return res.status(403).json({ message: "Permission denied." });
+    // }
 
     const deletedPost = await Post.findByIdAndDelete(id);
 

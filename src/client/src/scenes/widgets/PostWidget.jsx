@@ -4,9 +4,10 @@ import {
   FavoriteOutlined,
   DeleteOutlineOutlined,
 } from "@mui/icons-material";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import MonetizationOnOutlinedIcon from '@mui/icons-material/MonetizationOnOutlined';
 import SendIcon from '@mui/icons-material/Send';
-import { Box, Divider, IconButton, Typography, useTheme, Snackbar, styled } from "@mui/material";
+import { Box, Divider, IconButton, Typography, useTheme, Snackbar, styled, Menu, MenuItem } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
 import Friend from "components/Friend";
 import WidgetWrapper from "components/WidgetWrapper";
@@ -14,6 +15,8 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "state";
 import CloseIcon from '@mui/icons-material/Close';
+import { useNavigate } from "react-router-dom";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 const SuccessPopup = styled('div')(({ theme }) => ({
   backgroundColor: theme.palette.success.main,
@@ -81,12 +84,14 @@ const PostWidget = ({
   comments,
   money,
 }) => {
+  const navigate = useNavigate();
   const [isCommentPopupOpen, setIsCommentPopupOpen] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [commentInputValue, setCommentInputValue] = useState("");
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const loggedInUserId = useSelector((state) => state.user._id);
+  const wallet = useSelector((state) => state.user.money);
   const firstname = useSelector((state) => state.user.firstName);
   const lastname = useSelector((state) => state.user.lastName);
   const isLiked = Boolean(likes[loggedInUserId]);
@@ -105,6 +110,15 @@ const PostWidget = ({
   const [showDeleteCommentPopup, setShowDeleteCommentPopup] = useState(false);
   const [showErrorCommentPopup, setShowErrorCommentPopup] = useState(false);
 
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
 
   const { palette } = useTheme();
@@ -134,6 +148,7 @@ const PostWidget = ({
         body: JSON.stringify({ postId, amount: inputValue }),
       });
   
+  
       if (response.ok) {
         setIsReloading(true);
         setShowSubmitPopup(true);
@@ -144,16 +159,16 @@ const PostWidget = ({
           // Nếu biến isReloading là true, thực hiện reload trang và đặt lại biến isReloading thành false
           // Đặt lại biến isReloading sau khi đã reload trang
           window.location.reload();
-        }, 3000); // 3000 milliseconds = 3 seconds
+        }, 2000); // 2000 milliseconds = 3 seconds
       } else {
         // Xử lý khi có lỗi
         setShowErrorPopup(true);
         setIsPopupOpen(false);
         setTimeout(() => {
-          setShowErrorPopup(false);
           setIsReloading(false);
+          setShowErrorPopup(false);
           //window.location.reload();
-        }, 3000);
+        }, 2000);
           }
   };
 
@@ -175,7 +190,7 @@ const PostWidget = ({
         setShowSuccessPopup(false);
         setIsReloading(false); 
         window.location.reload();
-        }, 3000); // 3000 milliseconds = 3 seconds
+        }, 2000); // 2000 milliseconds = 3 seconds
     } else {
       // Xử lý khi có lỗi
     }
@@ -202,7 +217,7 @@ const PostWidget = ({
         setShowErrorCommentPopup(true);
         setTimeout(() => {
           setShowErrorCommentPopup(false);
-        }, 3000);
+        }, 2000);
         console.error("Error sending comment:", response.status, response.statusText);
       }
     } catch (error) {
@@ -228,7 +243,7 @@ const PostWidget = ({
         setTimeout(() => {
           window.location.reload();
 
-        }, 3000);
+        }, 2000);
       } else {
         // Xử lý khi có lỗi
       }
@@ -264,13 +279,44 @@ const PostWidget = ({
   return (
     <Box>
       <WidgetWrapper m="2rem 0" >
+      <div style={{ display: "flex", alignItems: "flex-start" }}>
+        <div style={{ flex: 9.5 }}>
         <Friend
           friendId={postUserId}
           name={name}
           subtitle={location}
           userPicturePath={userPicturePath}
         />
-        <Typography color={main} sx={{ mt: "1rem" }}>
+        </div>
+        <div style={{ flex: 0.5 }}>
+        <FlexBetween >
+          {userRole === "admin" || postUserId == loggedInUserId ? (
+                <>
+                  <IconButton
+            sx={{
+              marginLeft: "auto",
+            }}
+            style={{ marginTop: "0.5rem"}}
+            onClick={handleClick}
+          >
+            <MoreVertIcon sx={{ color: primary }}/>
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+          >
+            <MenuItem onClick={handleDelete}>
+              <DeleteOutlineIcon sx={{ marginRight: 1 }} />
+              Delete post
+            </MenuItem>
+          </Menu>
+                </>
+              ) : null}
+        </FlexBetween >
+        </div>
+      </div>
+        <Typography color={main} sx={{ mt: "1rem", textAlign: "justify" }}>
           {description}
         </Typography>
         {picturePath && (
@@ -396,9 +442,18 @@ const PostWidget = ({
       {showComments && (
         <div>
           {comments.map(({ _id, userId, comment }, index) => (
-        <div key={_id} style={{ marginBottom: "1rem", display: "flex", alignItems: "center" }}>
+        <div key={_id} style={{ marginBottom: "1rem", display: "flex", alignItems: "center", textAlign: "justify" }}>
           <div style={{ flex: 1 }}>
-            <strong>
+            <strong
+              onClick={() => navigate(`/profile/${userId}`)}
+              style={{
+                cursor: "pointer",
+                transition: "opacity 0.3s",
+                opacity: 1,
+              }}
+              onMouseEnter={(e) => (e.target.style.opacity = 0.7)}
+              onMouseLeave={(e) => (e.target.style.opacity = 1)}
+            >
               {userNames[userId]}
             </strong>: {comment}
           </div>
@@ -449,21 +504,9 @@ const PostWidget = ({
         Submit Comment
       </button>
       </WidgetWrapper>
-      <FlexBetween >
-          {userRole === "admin" || postUserId == loggedInUserId ? (
-                <>
-                  <IconButton sx={{
-                      marginLeft: "auto", // Đẩy nút về phía bên phải
-                    }} onClick={handleDelete}>
-                              <DeleteOutlineOutlined />
-                            </IconButton>
-                  {/* Các đoạn mã khác */}
-                </>
-              ) : null}
-      </FlexBetween >
       <Snackbar
         open={showSuccessPopup}
-        autoHideDuration={3000}
+        autoHideDuration={2000}
         onClose={() => setShowSuccessPopup(false)}
       >
         <SuccessPopup>
@@ -483,16 +526,25 @@ const PostWidget = ({
           Notification sent successfully.
         </PopupNotification>
       )}
-      <Snackbar open={showErrorPopup} autoHideDuration={3000} onClose={() => setShowErrorPopup(false)}>
+      <Snackbar open={showErrorPopup} autoHideDuration={2000} onClose={() => setShowErrorPopup(false)}>
       <ErrorPopup>
-        <div>Số tiền trong tài khoản không đủ.</div>
+        {inputValue > wallet && (
+          <div>Số tiền trong tài khoản không đủ.</div>
+        )}
+        {!inputValue || inputValue === "0" && (
+          <div>Không thể để trống khi nhập.</div>
+        )}
+        {_id === postUserId && (
+          <div>Bạn không thể tự đầu tư cho chính mình.</div>
+        )}
         <IconButton onClick={() => setShowErrorPopup(false)} size="small" sx={{ color: 'white' }}>
           <CloseIcon />
         </IconButton>
       </ErrorPopup>
+
     </Snackbar>
 
-    <Snackbar open={showDeleteCommentPopup} autoHideDuration={3000} onClose={() => setShowDeleteCommentPopup(false)}>
+    <Snackbar open={showDeleteCommentPopup} autoHideDuration={2000} onClose={() => setShowDeleteCommentPopup(false)}>
       <SuccessPopup>
         <div>Comment đã được xoá thành công.</div>
         <IconButton onClick={() => setShowDeleteCommentPopup(false)} size="small" sx={{ color: 'white' }}>
@@ -501,7 +553,7 @@ const PostWidget = ({
       </SuccessPopup>
     </Snackbar>
 
-    <Snackbar open={showErrorCommentPopup} autoHideDuration={3000} onClose={() => setShowErrorCommentPopup(false)}>
+    <Snackbar open={showErrorCommentPopup} autoHideDuration={2000} onClose={() => setShowErrorCommentPopup(false)}>
       <ErrorPopup>
         <div>Không thể gửi comment không có nội dung.</div>
         <IconButton onClick={() => setShowErrorCommentPopup(false)} size="small" sx={{ color: 'white' }}>

@@ -9,6 +9,9 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Snackbar, 
+  IconButton,
+  styled,
 } from "@mui/material";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { Formik } from "formik";
@@ -18,6 +21,7 @@ import { useDispatch } from "react-redux";
 import { setLogin } from "state";
 import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
+import CloseIcon from '@mui/icons-material/Close';
 
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("required"),
@@ -33,6 +37,21 @@ const loginSchema = yup.object().shape({
   email: yup.string().email("invalid email").required("required"),
   password: yup.string().required("required"),
 });
+
+const ErrorPopup = styled('div')(({ theme }) => ({
+  backgroundColor: theme.palette.error.main,
+  color: 'white',
+  borderRadius: '4px',
+  padding: '8px 16px',
+  boxShadow: theme.shadows[2],
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  position: 'fixed',
+  bottom: '20px',
+  left: '20px',
+  zIndex: 10000,
+}));
 
 const initialValuesRegister = {
   firstName: "",
@@ -57,6 +76,8 @@ const Form = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const isLogin = pageType === "login";
   const isRegister = pageType === "register";
+  const [showErrorPopup, setShowErrorPopup] = useState(false);
+  const [showErrorPopup1, setShowErrorPopup1] = useState(false);
 
   const register = async (values, onSubmitProps) => {
     // this allows us to send form info with image
@@ -76,8 +97,16 @@ const Form = () => {
     const savedUser = await savedUserResponse.json();
     onSubmitProps.resetForm();
 
-    if (savedUser) {
+    if (!("error" in savedUser)) {
       setPageType("login");
+    } else {
+      // Xử lý khi có lỗi
+      setShowErrorPopup1(true);
+      setTimeout(() => {
+        setShowErrorPopup1(false);
+        //setPageType("login");
+        //window.location.reload();
+      }, 2000);
     }
   };
 
@@ -88,8 +117,9 @@ const Form = () => {
       body: JSON.stringify(values),
     });
     const loggedIn = await loggedInResponse.json();
+    console.log(loggedIn);
     onSubmitProps.resetForm();
-    if (loggedIn) {
+    if ("token" in loggedIn) {
       dispatch(
         setLogin({
           user: loggedIn.user,
@@ -97,6 +127,15 @@ const Form = () => {
         })
       );
       navigate("/home");
+    } else {
+      // Xử lý khi có lỗi
+      setShowErrorPopup(true);
+      setTimeout(() => {
+        setShowErrorPopup(false);
+        //window.location.reload();
+        //window.location.reload();
+      }, 2000);
+      //navigate("/login");
     }
   };
 
@@ -106,6 +145,7 @@ const Form = () => {
   };
 
   return (
+    <Box>
     <Formik
       onSubmit={handleFormSubmit}
       initialValues={isLogin ? initialValuesLogin : initialValuesRegister}
@@ -283,6 +323,25 @@ const Form = () => {
         </form>
       )}
     </Formik>
+    <Snackbar open={showErrorPopup} autoHideDuration={2000} onClose={() => setShowErrorPopup(false)}>
+      <ErrorPopup>
+        <div>Dữ liệu không hợp lệ.</div>
+        <IconButton onClick={() => setShowErrorPopup(false)} size="small" sx={{ color: 'white' }}>
+          <CloseIcon />
+        </IconButton>
+      </ErrorPopup>
+
+    </Snackbar>
+    <Snackbar open={showErrorPopup1} autoHideDuration={2000} onClose={() => setShowErrorPopup1(false)}>
+      <ErrorPopup>
+        <div>Email đã tồn tại.</div>
+        <IconButton onClick={() => setShowErrorPopup1(false)} size="small" sx={{ color: 'white' }}>
+          <CloseIcon />
+        </IconButton>
+      </ErrorPopup>
+
+    </Snackbar>
+    </Box>
   );
 };
 

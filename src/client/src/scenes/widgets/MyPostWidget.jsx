@@ -170,7 +170,7 @@ const MyPostWidget = ({ picturePath }) => {
         </Button>
       </FlexBetween>
       </>
-              ) : null}
+              ) : <FlexBetween><Box sx={{ fontStyle: 'italic' ,fontFamily: 'Monospace',  textAlign: 'center'}}>Your visionary investments drive our success and inspire us to push the boundaries of innovation. Welcome to InvestingHub, where your financial acumen finds its perfect platform.</Box></FlexBetween>}
     </WidgetWrapper>
   );
 };

@@ -5,6 +5,7 @@ import ProfilePage from "scenes/profilePage";
 import WalletPage from "scenes/wallet";
 import DepositPage from "scenes/deposit";
 import WithdrawPage from "scenes/withdraw";
+import StartPage from "scenes/startpage";
 import AdminDepositRequestsPage from "scenes/admin";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
@@ -23,10 +24,14 @@ function App() {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <Routes>
-            <Route path="/" element={<LoginPage />} />
+            <Route path="/" element={<StartPage />} />
+            <Route
+              path="/login"
+              element={<LoginPage />}
+            />
             <Route
               path="/home"
-              element={isAuth ? <HomePage /> : <Navigate to="/" />}
+              element={isAuth ? <HomePage /> : <Navigate to="/login" />}
             />
             <Route
               path="/profile/:userId"

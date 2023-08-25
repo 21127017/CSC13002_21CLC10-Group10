@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { setFriends } from "state";
 import FlexBetween from "./FlexBetween";
 import UserImage from "./UserImage";
+import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined';
 
 const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
   const dispatch = useDispatch();
@@ -39,6 +40,7 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
 
   return (
     <FlexBetween>
+      <div style={{ display: "flex", alignItems: "flex-start"}}>
       <FlexBetween gap="1rem">
         <UserImage image={userPicturePath} size="55px" />
         <Box
@@ -65,18 +67,24 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
           </Typography>
         </Box>
       </FlexBetween>
-      <IconButton
-        onClick={() => patchFriend()}
-        sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
-      >
-        {isFriend ? (
-          <PersonRemoveOutlined sx={{ color: primaryDark }} />
-        ) : (
-          <PersonAddOutlined sx={{ color: primaryDark }} />
-        )}
-      </IconButton>
+      <div style={{ width: "30px" }}/>
+      {friendId !== _id ? (
+        <IconButton
+          onClick={() => patchFriend()}
+          sx={{  p: "0.4rem" , }}
+        >
+          {isFriend ? (
+            <PersonRemoveOutlined sx={{ color: primaryDark }} style={{marginTop: "0.5rem" }}/>
+          ) : (
+              <PersonAddOutlinedIcon sx={{ color: primaryDark }} style={{marginTop: "0.5rem" }}/>
+          )}
+        </IconButton>
+        ) : null}
+        </div>
     </FlexBetween>
   );
 };
 
 export default Friend;
+
+
